@@ -1,5 +1,7 @@
 //define HTML elements
 const board = document.getElementById('game-board');
+const instructionText = document.getElementById('instruction-text');
+const log = document.getElementById('logo');
 
 // define game variables
 const gridSize = 20;
@@ -8,6 +10,7 @@ let food = generateFood();
 let direction = 'right';
 let gameInterval;
 let gameSpeedDelay = 200;
+let gameStarted = false;
 
 // draw game map, snake, food
 function draw() {
@@ -39,7 +42,7 @@ function setPosition(element, position) {
 }
 
 // Testing draw function
-draw();
+// draw();
 
 // Draw food function
 function drawFood() {
@@ -79,9 +82,11 @@ function move() {
 
     if (head.x == food.x && head.y == food.y) {
         food = generateFood();
+        increaseSpeed();
         clearInterval(); // Clear past interval
         gameInterval = setInterval(() => {
             move();
+            // checkCollision();
             draw();
         }, gameSpeedDelay);
     } else {
@@ -96,3 +101,44 @@ function move() {
 // }, 200);
 
 // Start game function
+function startGame() {
+    gameStarted = true; // keep track of a running game
+    instructionText.style.display = 'none';
+    logo.style.display = 'none';
+    gameInterval = setInterval(() => {
+       move();
+    //    checkCollision();
+       draw(); 
+    }, gameSpeedDelay);
+}
+
+// keypress event listener
+function handleKeyPress(event) {
+    if (
+        (!gameStarted && event.code === 'Space') ||
+        (!gameStarted && event.key === ' ')
+    ) {
+        startGame();
+    } else {
+        switch (event.key) {
+            case 'ArrowUp':
+                direction = 'up';
+                break;
+            case 'ArrowDown':
+                direction = 'down';
+                break;
+            case 'ArrowLeft':
+                direction = 'left';
+                break;
+            case 'ArrowRight':
+                direction = 'right';
+                break;
+        }
+    }
+}
+
+document.addEventListener('keydown', handleKeyPress);
+
+function increaseSpeed() {
+    console.log(gameSpeedDelay);
+}
